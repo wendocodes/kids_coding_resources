@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kids Coding Resources</title>
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
     <div id="app">
@@ -12,14 +13,24 @@
             <input type="text" v-model="state.newResource.title" placeholder="Title" required>
             <input type="text" v-model="state.newResource.category" placeholder="Category" required>
             <input type="url" v-model="state.newResource.link" placeholder="Link" required>
+            <textarea v-model="state.newResource.description" placeholder="Description" rows="3" required></textarea>
             <button type="submit">Add Resource</button>
         </form>
-        <ul>
-            <li v-for="resource in state.resources" :key="resource.id">
-                <strong>{{ resource.title }}</strong> ({{ resource.category }}) - 
-                <a :href="resource.link" target="_blank">Open</a>
-            </li>
-        </ul>
+        
+        <div class="resources">
+            <div class="resource-card" v-for="resource in state.resources" :key="resource.id">
+                <div class="resource-details">
+                    <h2>{{ resource.title }}</h2>
+                    <p><strong>Category:</strong> {{ resource.category }}</p>
+                    <p>{{ resource.description }}</p>
+                    <div class="resource-actions">
+                        <a :href="resource.link" target="_blank" class="resource-link">Visit Resource</a>
+                        <button class="delete-button" @click="deleteResource(resource.id)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.js"></script>

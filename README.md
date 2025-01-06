@@ -1,4 +1,5 @@
 # Project Name
+Kids Coding Resources
 
 ## Description
 Kids Coding Resources

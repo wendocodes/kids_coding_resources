@@ -1,9 +1,10 @@
+'use strict';
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
-import { initializeDatabase } from "./models/index.js"; // Import database initialization
+import { sequelize } from "./models/index.js";
 import resourcesRoutes from "./routes/resources.js"; // Import routes
 
 // Resolve __dirname in ESM
@@ -41,7 +42,11 @@ io.on("connection", (socket) => {
 // Start the server and initialize the database
 const startServer = async () => {
     try {
-        await initializeDatabase(); // Initialize the database before starting the server
+        // Sync database with force option to add the description field
+        await sequelize.sync({ force: true });
+        console.log("Database synced with schema updates.");
+
+        // Start the server
         server.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`);
         });
