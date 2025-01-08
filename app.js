@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
-import { sequelize } from "./models/index.js";
-import resourcesRoutes from "./routes/resources.js"; // Import routes
+import { initializeDatabase } from "./models/index.js";
+import resourcesRoutes from "./routes/resources.js";
 
 // Resolve __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -18,17 +18,15 @@ const io = new Server(server);
 const PORT = 3000;
 
 // Middleware
-app.use(express.json()); // For parsing JSON
-app.use(express.static(path.join(__dirname, "public"))); // Serve static files
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public"))); 
 
 // Routes
-app.use("/api/resources", resourcesRoutes); // Use the resources route
+app.use("/api/resources", resourcesRoutes); 
 
-// Socket.IO setup
 io.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
 
-    // Listen for new resource events and broadcast updates to all clients
     socket.on("new-resource", (data) => {
         console.log("Broadcasting new resource:", data);
         socket.broadcast.emit("update-resources", data);
@@ -42,11 +40,9 @@ io.on("connection", (socket) => {
 // Start the server and initialize the database
 const startServer = async () => {
     try {
-        // Sync database with force option to add the description field
-        await sequelize.sync({ force: true });
+        await initializeDatabase();
         console.log("Database synced with schema updates.");
 
-        // Start the server
         server.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`);
         });

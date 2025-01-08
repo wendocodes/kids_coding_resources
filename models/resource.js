@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 import { Sequelize, DataTypes } from "sequelize";
 import { dirname } from "path";
 import { fileURLToPath } from "url";

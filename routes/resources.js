@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 import express from "express";
-import { sequelize, Resource } from "../models/resource.js"; // Correct import for named exports
+import { Resource } from "../models/resource.js";
 
 const router = express.Router();
 
@@ -19,7 +19,6 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     const { title, category, link, description} = req.body;
 
-    // Validation
     if (!title || !category || !link || !description) {
         return res.status(400).json({ error: "All fields except image are required." });
     }
@@ -32,6 +31,20 @@ router.post("/", async (req, res) => {
         res.status(500).json({ error: "Failed to add resource." });
     }
 });
+
+// Get all resources or filter by category
+router.get("/", async (req, res) => {
+    const { category } = req.query;
+    try {
+      const resources = category
+        ? await Resource.findAll({ where: { category } }) 
+        : await Resource.findAll(); 
+      res.json(resources);
+    } catch (err) {
+      console.error("Error fetching resources:", err);
+      res.status(500).json({ error: "Failed to fetch resources" });
+    }
+  });
 
 // DELETE resource by ID
 router.delete("/:id", async (req, res) => {

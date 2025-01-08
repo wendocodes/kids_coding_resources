@@ -1,11 +1,11 @@
-'use strict';
-const { createApp, reactive, onMounted } = Vue;
+"use strict";
+const { createApp, reactive, onMounted, ref, computed } = Vue;
 const socket = io();
 
 createApp({
     setup() {
         const state = reactive({
-            resources: [], // Array to store fetched resources
+            resources: [],
             newResource: {
                 title: "",
                 category: "",
@@ -13,6 +13,8 @@ createApp({
                 description: ""
             },
         });
+
+        const selectedCategory = ref("");
 
         // Fetch all resources
         const fetchResources = async () => {
@@ -25,6 +27,15 @@ createApp({
                 alert("Failed to load resources");
             }
         };
+
+
+        // Computed property for filtering resources
+        const filteredResources = computed(() => {
+            if (!selectedCategory.value) return state.resources;
+            return state.resources.filter(
+                (resource) => resource.category === selectedCategory.value
+            );
+        });
 
         // Add a new resource
         const addResource = async () => {
@@ -68,10 +79,8 @@ createApp({
             state.resources.push(newResource);
         });
 
-        // Fetch resources on component mount
         onMounted(fetchResources);
 
-        // Return all methods and state for use in the template
-        return { state, addResource, deleteResource };
+        return { state, selectedCategory, addResource, filteredResources, deleteResource };
     },
 }).mount("#app");

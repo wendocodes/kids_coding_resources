@@ -9,16 +9,35 @@
 <body>
     <div id="app">
         <h1>Kids Coding Resources</h1>
+
+        <!-- Category Filter-->
+        <div class="category-filter">
+            <label for="filter-category">Filter by Category:</label>
+            <select v-model="selectedCategory">
+                <option value="">All Categories</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+            </select>
+        </div>
+
+        <!-- Add Resource Form -->
         <form @submit.prevent="addResource">
             <input type="text" v-model="state.newResource.title" placeholder="Title" required>
-            <input type="text" v-model="state.newResource.category" placeholder="Category" required>
+            <select class="category-select" v-model="state.newResource.category" required>
+                <option disabled value="">Select Category</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+            </select>
             <input type="url" v-model="state.newResource.link" placeholder="Link" required>
             <textarea v-model="state.newResource.description" placeholder="Description" rows="3" required></textarea>
             <button type="submit">Add Resource</button>
         </form>
-        
+
+        <!-- Displaying Resources -->
         <div class="resources">
-            <div class="resource-card" v-for="resource in state.resources" :key="resource.id">
+            <div class="resource-card" v-for="resource in filteredResources" :key="resource.id">
                 <div class="resource-details">
                     <h2>{{ resource.title }}</h2>
                     <p><strong>Category:</strong> {{ resource.category }}</p>
@@ -30,10 +49,10 @@
                 </div>
             </div>
         </div>
-        
     </div>
+
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.js"></script>
-    <script src="/main.js"></script>
+    <script type="module" src="/main.js"></script>
 </body>
 </html>
