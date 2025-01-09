@@ -1,6 +1,13 @@
 "use strict";
+
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.querySelector("canvas");
+
+    if (!canvas) {
+        console.error("Canvas element not found. Animation will not run.");
+        return; // Stop execution if canvas is not found
+    }
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -27,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            particles.forEach(particle => {
+            particles.forEach((particle) => {
                 // Draw each particle
                 ctx.beginPath();
                 ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
@@ -40,10 +47,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 particle.y += particle.dy;
 
                 // Bounce particles off edges
-                if (particle.x + particle.radius > canvas.width || particle.x - particle.radius < 0) {
+                if (
+                    particle.x + particle.radius > canvas.width ||
+                    particle.x - particle.radius < 0
+                ) {
                     particle.dx = -particle.dx;
                 }
-                if (particle.y + particle.radius > canvas.height || particle.y - particle.radius < 0) {
+                if (
+                    particle.y + particle.radius > canvas.height ||
+                    particle.y - particle.radius < 0
+                ) {
                     particle.dy = -particle.dy;
                 }
             });
@@ -62,5 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Start the animation
         draw();
+    } else {
+        console.error("Canvas context not supported.");
     }
 });

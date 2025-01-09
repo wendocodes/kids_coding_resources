@@ -10,6 +10,25 @@ const sequelize = new Sequelize({
     storage: storePath
 });
 
+let User = sequelize.define("user", {
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "user", 
+        validate: {
+            isIn: [["admin", "user"]] // <- Make sure the validate object is properly closed
+        }
+    },
+});
+
 // Model definition
 let Resource = sequelize.define("Resource", {
     title: {
@@ -32,5 +51,6 @@ let Resource = sequelize.define("Resource", {
     timestamps: true,
 });
 
-export { sequelize, Resource };
+
+export { sequelize, Resource, User };
 

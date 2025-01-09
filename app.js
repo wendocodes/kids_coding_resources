@@ -1,13 +1,11 @@
-"use strict";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
-import { initializeDatabase } from "./models/index.js";
-import resourcesRoutes from "./routes/resources.js";
+import { sequelize, User, Resource } from "./models/resource.js";
+import authRoutes from "./routes/auth.js";
 
-// Resolve __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -18,37 +16,33 @@ const io = new Server(server);
 const PORT = 3000;
 
 // Middleware
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public"))); 
+app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'public', 'views')); 
+app.set('view engine', 'ejs'); 
 
 // Routes
-app.use("/api/resources", resourcesRoutes); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(authRoutes);
 
-io.on("connection", (socket) => {
-    console.log("New client connected:", socket.id);
+// Sync the database and seed data
+sequelize.sync({ force: true }).then(() => {
+    User.bulkCreate([
+        { username: "admin", password: "admin123", role: "admin" },
+        { username: "mark", password: "9876", role: "admin" } 
+    ]);
 
-    socket.on("new-resource", (data) => {
-        console.log("Broadcasting new resource:", data);
-        socket.broadcast.emit("update-resources", data);
-    });
+    Resource.bulkCreate([
+        { title: "Learn JavaScript", category: "Beginner", link: "https://javascript.info", description: "A comprehensive guide to modern JavaScript." },
+        { title: "FreeCodeCamp", category: "Intermediate", link: "https://freecodecamp.org", description: "Learn coding with hands-on projects." },
+        { title: "Eloquent JavaScript", category: "Advanced", link: "https://eloquentjavascript.net", description: "A deep dive into JavaScript concepts." }
+    ]);
 
-    socket.on("disconnect", () => {
-        console.log("Client disconnected:", socket.id);
-    });
+    console.log("Database synced and seeded.");
 });
 
-// Start the server and initialize the database
-const startServer = async () => {
-    try {
-        await initializeDatabase();
-        console.log("Database synced with schema updates.");
-
-        server.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error("Failed to start the server:", error);
-    }
-};
-
-startServer();
+// Start the server
+server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
