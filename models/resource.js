@@ -24,7 +24,7 @@ let User = sequelize.define("user", {
         allowNull: false,
         defaultValue: "user", 
         validate: {
-            isIn: [["admin", "user"]] // <- Make sure the validate object is properly closed
+            isIn: [["admin", "user"]]
         }
     },
 });

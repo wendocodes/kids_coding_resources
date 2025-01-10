@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!canvas) {
         console.error("Canvas element not found. Animation will not run.");
-        return; // Stop execution if canvas is not found
+        return; 
     }
 
     canvas.width = window.innerWidth;
@@ -14,11 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (canvas.getContext) {
         const ctx = canvas.getContext("2d");
 
-        // Particle properties
         const particleCount = 1000;
         const particles = [];
 
-        // Initialize particles
         for (let i = 0; i < particleCount; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
@@ -30,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Animation loop
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 

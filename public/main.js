@@ -8,7 +8,7 @@ createApp({
             selectedCategory: "",
             newResource: { title: "", category: "", link: "", description: "" },
         });
-        
+
 
         // Fetch all resources
         const fetchResources = async () => {
@@ -16,18 +16,17 @@ createApp({
                 const res = await fetch("/api/resources");
                 if (res.ok) {
                     const data = await res.json();
-                    state.resources = data || []; // Set to an empty array if undefined
-                    console.log("Fetched resources:", state.resources);
+                    state.resources = data || [];
                 } else {
                     console.error("Failed to fetch resources:", res.status);
-                    state.resources = []; // Reset to empty on failure
+                    state.resources = [];
                 }
             } catch (err) {
                 console.error("Error fetching resources:", err);
-                state.resources = []; // Reset to empty on error
+                state.resources = []; 
             }
         };
-        
+
 
         // Fetch user session
         const fetchUserSession = async () => {
@@ -35,12 +34,16 @@ createApp({
                 const res = await fetch("/api/auth/session");
                 if (res.ok) {
                     state.user = await res.json();
+                } else {
+                    state.user = null;
                 }
+                await fetchResources();
             } catch (err) {
                 console.error("Error fetching session:", err);
+                state.user = null;
             }
         };
-
+        
         // Add a new resource (Admin only)
         const addResource = async () => {
             if (!state.user || state.user.role !== "admin") {
@@ -98,8 +101,8 @@ createApp({
                 (resource) => resource.category === state.selectedCategory
             );
         });
-        
-        
+
+
 
         onMounted(() => {
             fetchResources();

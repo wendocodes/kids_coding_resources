@@ -35,18 +35,17 @@
                         <form action="<%= resource.link %>" method="GET" target="_blank" style="display:inline; width: 50%;">
                             <button class="action-button visit-button" type="submit">Visit Resource</button>
                         </form>
-                        <form action="/api/resources/<%= resource.id %>" method="POST" style="display:inline; width: 50%;">
+                        <form action="/api/resources/<%= resource.id %>?_method=DELETE" method="POST" style="display:inline; width: 50%;">
                             <button class="action-button delete-button" type="submit">Delete</button>
-                        </form>
+                        </form>                                             
                     </div>
-                    
                 </div>
             </div>
         <% }); %>
     </div>
 
     <!-- Logout Button -->
-    <form action="/logout" method="POST">
+    <form action="/api/logout" method="POST">
         <button type="submit">Logout</button>
     </form>
 </body>

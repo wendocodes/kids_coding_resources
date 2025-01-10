@@ -1,9 +1,10 @@
 import express from "express";
 import { User, Resource } from "../models/resource.js";
 
+
 const router = express.Router();
 
-let userdata = null; // Global variable for logged-in user data
+let userdata = null;
 
 // Serve the index.html page with resources for all users
 router.get("/", async (req, res) => {
@@ -32,7 +33,7 @@ router.get("/api/auth/session", (req, res) => {
     if (!userdata) {
         return res.status(401).json({ error: "Not authenticated" });
     }
-    res.json(userdata); // Send the logged-in user's data
+    res.json(userdata);
 });
 
 // Login route
@@ -49,43 +50,35 @@ router.post("/login", async (req, res) => {
             return res.send("Invalid username, password, or insufficient privileges");
         }
 
-        // Set the global userdata
-        userdata = { id: user.id, username: user.username, role: user.role };
+        // Save user data in session
+        req.session.user = { id: user.id, username: user.username, role: user.role };
 
-        res.redirect("/admin");
+        req.session.save((err) => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).send("Internal server error");
+            }
+
+            res.redirect("/admin");
+        });
     } catch (error) {
         console.error("Error logging in:", error);
         res.status(500).send("Internal server error");
     }
 });
 
-
-// Admin route
-router.get("/admin", async (req, res) => {
-    if (!userdata || userdata.role !== "admin") {
-        return res.redirect("/login");
-    }
-
-    try {
-        const resources = await Resource.findAll();
-        res.render("dashboard", { user: userdata, resources });
-    } catch (error) {
-        console.error("Error fetching resources for admin:", error);
-        res.status(500).send("Internal server error");
-    }
-});
-
-
-// Logout route
 router.post("/api/logout", (req, res) => {
-    userdata = null; // Clear the session data
-    res.json({ message: "Logged out successfully" });
-});
-
-// Logout page route for redirection after logout
-router.get("/logout", (req, res) => {
-    userdata = null; // Clear the session data
-    res.redirect("/"); // Redirect to homepage after logout
+    if (req.session) {
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Error destroying session:", err);
+                return res.status(500).json({ error: "Internal server error" });
+            }
+            res.json({ message: "Logged out successfully" });
+        });
+    } else {
+        res.status(400).json({ error: "No session to destroy" });
+    }
 });
 
 export default router;
