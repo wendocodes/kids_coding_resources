@@ -9,8 +9,10 @@ createApp({
             newResource: { title: "", category: "", link: "", description: "" },
         });
 
-
-        // Fetch all resources
+        /**
+         * Fetch all resources from the server
+         * Updates the resources array in the state
+         */
         const fetchResources = async () => {
             try {
                 const res = await fetch("/api/resources");
@@ -23,12 +25,15 @@ createApp({
                 }
             } catch (err) {
                 console.error("Error fetching resources:", err);
-                state.resources = []; 
+                state.resources = [];
             }
         };
 
-
-        // Fetch user session
+        /**
+         * Fetch the current user session from the server
+         * Updates the user object in the state
+         * Also fetches resources after obtaining session data
+         */
         const fetchUserSession = async () => {
             try {
                 const res = await fetch("/api/auth/session");
@@ -43,8 +48,11 @@ createApp({
                 state.user = null;
             }
         };
-        
-        // Add a new resource (Admin only)
+
+        /**
+         * Add a new resource to the server (Admin only)
+         * Sends new resource data to the server and updates state
+         */
         const addResource = async () => {
             if (!state.user || state.user.role !== "admin") {
                 alert("Only admins can add resources.");
@@ -60,14 +68,18 @@ createApp({
                     },
                     body: JSON.stringify({ title, category, link, description }),
                 });
-                fetchResources(); // Reload resources after adding a new one
-                state.newResource = { title: "", category: "", link: "", description: "" }; // Reset the form
+                fetchResources();
+                state.newResource = { title: "", category: "", link: "", description: "" };
             } catch (err) {
                 console.error("Error adding resource:", err);
             }
         };
 
-        // Delete a resource (Admin only)
+        /**
+         * Delete a resource from the server (Admin only)
+         * Sends delete request to the server and updates state
+         * @param {number} id - The ID of the resource to delete
+         */
         const deleteResource = async (id) => {
             if (!state.user || state.user.role !== "admin") {
                 alert("Only admins can delete resources.");
@@ -76,24 +88,30 @@ createApp({
 
             try {
                 await fetch(`/api/resources/${id}`, { method: "DELETE" });
-                fetchResources(); // Reload resources after deletion
+                fetchResources();
             } catch (err) {
                 console.error("Error deleting resource:", err);
             }
         };
 
-        // Logout
+        /**
+         * Log out the current user
+         * Sends logout request to the server, resets user state, and fetches resources
+         */
         const logout = async () => {
             try {
                 await fetch("/api/logout", { method: "POST" });
                 state.user = null;
-                fetchResources(); // Reload resources after logout
+                fetchResources();
             } catch (err) {
                 console.error("Error logging out:", err);
             }
         };
 
-
+        /**
+         * Compute a filtered list of resources based on the selected category
+         * Returns all resources if no category is selected
+         */
         const filteredResources = computed(() => {
             if (!state.resources || state.resources.length === 0) return [];
             if (!state.selectedCategory) return state.resources;
@@ -102,8 +120,9 @@ createApp({
             );
         });
 
-
-
+        /**
+         * Fetch resources and user session data when the component is mounted
+         */
         onMounted(() => {
             fetchResources();
             fetchUserSession();

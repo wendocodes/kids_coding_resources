@@ -1,10 +1,15 @@
-"use-strict"
+"use strict";
+
 import express from "express";
-import { Resource } from "../models/resource.js";
+import { Resource } from "../models/model.js";
 
 const router = express.Router();
 
-// Middleware to check if the user is authenticated
+/**
+ * Middleware to check if the user is authenticated
+ * Proceeds to the next middleware/route if the user is authenticated,
+ * otherwise sends a 401 Unauthorized response.
+ */
 export const isAuthenticated = (req, res, next) => {
     if (req.session.user) {
         return next();
@@ -12,6 +17,11 @@ export const isAuthenticated = (req, res, next) => {
     res.status(401).send('Unauthorized');
 };
 
+/**
+ * Middleware to check if the user has admin rights
+ * Proceeds to the next middleware/route if the user is an admin,
+ * otherwise sends a 403 Forbidden response.
+ */
 export const isAdmin = (req, res, next) => {
     if (!req.session.user || req.session.user.role !== "admin") {
         return res.status(403).json({ error: "Forbidden: You do not have admin rights." });
@@ -19,7 +29,10 @@ export const isAdmin = (req, res, next) => {
     next();
 };
 
-// Admin dashboard route
+/**
+ * Admin dashboard route
+ * Renders the dashboard view with the list of resources for authenticated admin users.
+ */
 router.get('/admin', isAuthenticated, isAdmin, async (req, res) => {
     try {
         const resources = await Resource.findAll();
@@ -32,12 +45,15 @@ router.get('/admin', isAuthenticated, isAdmin, async (req, res) => {
     }
 });
 
-// Fetch all resources
+/**
+ * Fetch all resources
+ * Returns a JSON array of resources, optionally filtered by a query parameter.
+ */
 router.get("/api/resources", async (req, res) => {
     try {
         const query = req.query.query;
         let resources;
-        
+
         if (query) {
             resources = await Resource.findAll({
                 where: {
@@ -52,43 +68,39 @@ router.get("/api/resources", async (req, res) => {
             resources = await Resource.findAll();
         }
 
-        res.json(resources || []); // Return empty array if no resources
+        res.json(resources || []);
     } catch (err) {
         console.error("Error fetching resources:", err);
         res.status(500).json({ error: "Failed to fetch resources" });
     }
 });
 
-// router.get("/api/resources", async (req, res) => {
-//     try {
-//         const resources = await Resource.findAll();
-//         res.json(resources || []); // Return empty array if no resources
-//     } catch (err) {
-//         console.error("Error fetching resources:", err);
-//         res.status(500).json({ error: "Failed to fetch resources" });
-//     }
-// });
 
-// Add a new resource (Admin only)
+/**
+ * Add a new resource (Admin only)
+ * Allows authenticated admin users to add a new resource and redirects to the admin dashboard.
+ */
 router.post("/api/resources", isAuthenticated, isAdmin, async (req, res) => {
     const { title, category, link, description } = req.body;
 
     try {
         await Resource.create({ title, category, link, description });
 
-        // Redirect to the admin dashboard after adding a resource
+    
         res.redirect("/admin");
     } catch (error) {
         console.error('Error adding resource:', error);
 
-        // Send error response
         if (!res.headersSent) {
             res.status(500).send('Internal server error');
         }
     }
 });
 
-// Delete a resource (Admin only)
+/**
+ * Delete a resource (Admin only)
+ * Allows authenticated admin users to delete a resource by ID and redirects to the admin dashboard.
+ */
 router.delete("/api/resources/:id", isAuthenticated, isAdmin, async (req, res) => {
     const { id } = req.params;
     console.log(`Attempting to delete resource with ID: ${id}`);

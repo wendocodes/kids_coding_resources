@@ -99,7 +99,7 @@ Kids-CodingResources/
 ├── app.js               # Main Express server file
 ├── models/ 
 │   ├── index.js         # Sequelize ORM configuration
-│   ├── resources.js     # Resource and User models
+│   ├── model.js     # Resource and User models
 ├── routes/               # Routes for different sections of the app
 │   ├── auth.js           # Authentication routes (login, logout, session)
 │   ├── resources.js      # Resources API routes (add, delete, fetch)
@@ -111,6 +111,4 @@ Kids-CodingResources/
 │       ├── login.ejs     # Login page
 │       ├── welcome.ejs   # Welcome page for regular users
 │       ├── resources.ejs # Resource display page for admins
-│   ├── components/       # Frontend components for interactive functionality
-│       ├── animations.js
-│       ├── SearchResources.js
+

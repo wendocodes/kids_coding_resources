@@ -15,6 +15,10 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+div {
+    margin: 20px;
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -67,7 +71,8 @@ canvas {
 h1,h2 {
     text-align: center;
     font-size: 2.5rem;
-    color: #007bff;
+    color: #29a7ed;
+    font-weight: bold;
     margin-top: 100px;
     position: relative;
     z-index: 1; 
@@ -76,7 +81,7 @@ h1,h2 {
 h2 {
     text-align: center;
     font-size: 1.5rem;
-    color: #ff009d;
+    color: #ff61e5;
     margin-top: 20px;
     position: relative;
     z-index: 1;
@@ -86,13 +91,40 @@ h2 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
+    width: 100%;
 }
 
-.category-filter {
+.login-btn {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin: 20px 0;
+}
+
+button {
+    background-color: #ff61e5;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-items: center;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.category-filter{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.resource-details, .add-resource {
+    background-color: #fff;
+    border: 2px solid #ff61e5;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .category-filter label {
@@ -132,13 +164,13 @@ h2 {
 
 .resource-actions {
     display: flex;
-    align-items: center;
+    justify-content: center;    
     gap: 20px;
 }
 
 .resource-link {
     text-decoration: none; 
-    color: #007bff; 
+    color: #181b1e !important; 
 }
 
 .resource-details h2 {
@@ -154,7 +186,7 @@ h2 {
 
 .resource-details a {
     display: inline-block;
-    color: #007bff;
+    color: #29a7ed;
     text-decoration: none;
     font-weight: bold;
 }

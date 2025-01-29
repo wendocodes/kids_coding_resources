@@ -8,10 +8,17 @@
 </head>
 <body>
     <h1>Login</h1>
-    <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
+    <form action="/login" method="POST" onsubmit="return validateForm(event)">
+        <div>
+            <input type="text" name="username" placeholder="Email" value="<%= username %>" required>
+            <span id="username-error" class="error" style="color: red;"><%= errors.username %></span>
+        </div>
+        <div>
+            <input type="password" name="password" placeholder="Password" required>
+            <span id="password-error" class="error" style="color: red;"><%= errors.password %></span>
+        </div>
         <button type="submit">Login</button>
     </form>
+    <script src="/validate.js"></script>
 </body>
 </html>

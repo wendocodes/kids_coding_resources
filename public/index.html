@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Coding Resources</title>
+    <title>The Young Coders Club(YCC)</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
     <div id="app">
-        <canvas></canvas>
-        <h1>Kids Coding Resources</h1>
+        <h1>The Young Coders Club(YCC)</h1>
 
         <!-- Login/Logout Section -->
-        <div v-if="!state.user">
-            <a href="/login">Login</a>
+        <div class="login-btn" v-if="!state.user">
+            <button><a href="/login">Login</a></button>
         </div>
 
         <!-- Category Filter -->
@@ -38,7 +39,8 @@
                     <option value="Advanced">Advanced</option>
                 </select>
                 <input type="url" v-model="state.newResource.link" placeholder="Link" required>
-                <textarea v-model="state.newResource.description" placeholder="Description" rows="3" required></textarea>
+                <textarea v-model="state.newResource.description" placeholder="Description" rows="3"
+                    required></textarea>
                 <button type="submit">Add Resource</button>
             </form>
         </div>
@@ -51,21 +53,18 @@
                     <p><strong>Category:</strong> {{ resource.category }}</p>
                     <p>{{ resource.description }}</p>
                     <div class="resource-actions">
-                        <a :href="resource.link" target="_blank" class="resource-link">
-                            Visit Resource
-                        </a>
-                        <button
-                            class="delete-button"
-                            v-if="state.user && state.user.role === 'admin'"
-                            @click="deleteResource(resource.id)"
-                        >
+                        <button class ="visit"><a :href="resource.link" target="_blank" class="resource-link">
+                                Visit Resource
+                            </a></button>
+                        <button class="delete-button" v-if="state.user && state.user.role === 'admin'"
+                            @click="deleteResource(resource.id)">
                             Delete
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div v-else>
             <p>No resources available.</p>
         </div>
@@ -74,6 +73,6 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.js"></script>
     <script type="module" src="/main.js"></script>
-    <script src="./components/animations.js"></script>
 </body>
+
 </html>
