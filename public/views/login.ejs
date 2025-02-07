@@ -8,9 +8,9 @@
 </head>
 <body>
     <h1>Login</h1>
-    <form action="/login" method="POST" onsubmit="return validateForm(event)">
+    <form action="/api/login" method="POST" onsubmit="return validateForm(event)">
         <div>
-            <input type="text" name="username" placeholder="Email" value="<%= username %>" required>
+            <input type="text" name="username" placeholder="Username" value="<%= username %>" required>
             <span id="username-error" class="error" style="color: red;"><%= errors.username %></span>
         </div>
         <div>
@@ -19,6 +19,6 @@
         </div>
         <button type="submit">Login</button>
     </form>
-    <script src="/validate.js"></script>
+    <script src="/views/validate.js"></script>
 </body>
 </html>

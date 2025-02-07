@@ -1,14 +1,13 @@
 import express from "express";
 import { User, Resource } from "../models/model.js";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
 
-let userdata = null;
-
-/**
- * Serve the homepage (index.html) with all available resources
- * Fetches all resources from the database and renders the index page
- */
+// Render homepage with resources
 router.get("/", async (req, res) => {
     try {
         const resources = await Resource.findAll();
@@ -19,99 +18,76 @@ router.get("/", async (req, res) => {
     }
 });
 
-/**
- * API endpoint to fetch all resources
- * Returns a JSON array of all resources in the database
- */
-router.get("/api/resources", async (req, res) => {
-    try {
-        const resources = await Resource.findAll();
-        res.json(resources);
-    } catch (error) {
-        console.error("Error fetching resources:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
-
-/**
- * API endpoint to check user session
- * Returns the current user data if logged in, otherwise returns an error
- */
-router.get("/api/auth/session", (req, res) => {
-    if (!userdata) {
-        return res.status(401).json({ error: "Not authenticated" });
-    }
-    res.json(userdata);
-});
-
-/**
- * Render the login page
- * Displays the login form to the user
- */
+// Render login page
 router.get("/login", (req, res) => {
     res.render("login", { errors: {}, username: "" });
 });
 
-/**
- * Handle login form submission
- * Validates the user's credentials and sets up the session if successful
- */
-router.post("/login", async (req, res) => {
+// Handle user login
+router.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const errors = {};
-
-    if (!emailPattern.test(username)) {
-        errors.username = "Invalid email format.";
-    }
-
-    if (password.length < 6) {
-        errors.password = "Password must be at least 6 characters long.";
-    }
-
-    if (Object.keys(errors).length > 0) {
-        return res.render("login", { errors, username });
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
     }
 
     try {
-        const user = await User.findOne({ where: { username, password } });
+        // Find the user by username
+        const user = await User.findOne({ where: { username } });
 
-        if (!user || user.role !== "admin") {
-            errors.login = "Invalid username, password, or insufficient privileges.";
-            return res.render("login", { errors, username });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid username or password" });
         }
 
-        req.session.user = { id: user.id, username: user.username, role: user.role };
+        // Compare the password
+        const match = await bcrypt.compare(password, user.password);
 
-        req.session.save((err) => {
-            if (err) {
-                console.error("Error saving session:", err);
-                return res.status(500).send("Internal server error");
-            }
-            res.redirect("/admin");
-        });
-    } catch (error) {
-        console.error("Error logging in:", error);
-        res.status(500).send("Internal server error");
+        if (!match) {
+            return res.status(400).json({ message: "Invalid username or password" });
+        }
+
+        // Password matched, send back user data (excluding password)
+        const userData = {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+        };
+
+        // Store user data in session
+        req.session.user = userData;
+
+        // Redirect to admin dashboard if user has admin privileges
+        if (user.role === "admin") {
+            req.session.save((err) => {
+                if (err) {
+                    console.error("Error saving session:", err);
+                    return res.status(500).send("Internal server error");
+                }
+                res.redirect("/admin");
+            });
+        } else {
+            // Render login page with error if user does not have admin privileges
+            res.render("login", { errors: { login: "Insufficient privileges." }, username });
+        }
+    } catch (err) {
+        console.error("Login error:", err);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 
-/**
- * Handle logout
- * Destroys the session and redirects the user to the homepage
- */
+// Handle user logout
 router.post("/api/logout", async (req, res) => {
     if (req.session) {
-        req.session.destroy(async (err) => {
+        req.session.destroy((err) => {
             if (err) {
                 console.error("Error destroying session:", err);
                 return res.status(500).json({ error: "Internal server error" });
             }
-            res.redirect("/");
+            res.clearCookie('connect.sid', { path: '/' });
+            return res.redirect("/");  // Redirect after successful logout
         });
     } else {
-        res.status(400).json({ error: "No session to destroy" });
+        return res.status(400).json({ error: "No session to destroy" });
     }
 });
 

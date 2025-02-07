@@ -124,7 +124,6 @@ createApp({
          * Fetch resources and user session data when the component is mounted
          */
         onMounted(() => {
-            fetchResources();
             fetchUserSession();
         });
 

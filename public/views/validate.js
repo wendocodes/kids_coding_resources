@@ -13,11 +13,10 @@ function validateForm(event) {
     usernameError.textContent = '';
     passwordError.textContent = '';
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     let isValid = true;
 
-    if (!emailPattern.test(username.value)) {
-        usernameError.textContent = 'Please enter a valid email address.';
+    if (username.value.trim() === "") {
+        usernameError.textContent = 'Username is required.';
         isValid = false;
     }
 
@@ -32,3 +31,10 @@ function validateForm(event) {
 
     return isValid;
 }
+
+// Clear session on browser unload
+window.addEventListener("beforeunload", (event) => {
+    fetch("/api/logout", { method: "POST" }).catch((err) => {
+        console.error("Session cleanup failed:", err);
+    });
+});

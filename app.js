@@ -7,6 +7,10 @@ import authRoutes from "./routes/auth.js";
 import resourcesRoutes from "./routes/resources.js";
 import session from "express-session";
 import methodOverride from 'method-override';
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,9 +24,9 @@ const PORT = 3000;
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'public', 'views'));
 
-app.use(express.static(path.join(__dirname, 'public'))); 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-    secret: 'session-secret-key',
+    secret: process.env.SESSION_SECRET || 'default-session-secret',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false, maxAge: 240000 }
@@ -30,36 +34,55 @@ app.use(session({
 
 app.use(methodOverride('_method'));
 app.use((req, res, next) => {
-    console.log("Session data:", req.session);
     res.locals.user = req.session.user || null;
     next();
 });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public"))); 
+
+// Middleware to handle caching issues
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Expires', '0');
+    res.set('Pragma', 'no-cache');
+    next();
+});
 
 // Routes
-app.use(authRoutes); 
-app.use(resourcesRoutes); 
+app.use(authRoutes);
+app.use(resourcesRoutes);
 
+// Sync the database schema without force and create initial admin if needed
+sequelize.sync({ force: true })
+    .then(async () => {
+        console.log("Database synced successfully with forced re-creation.");
 
-/**
- * Sync the database schema and populate initial data
- * Force sync drops and recreates tables
- */
-sequelize.sync({ force: true }).then(() => {
-    User.bulkCreate([
-        { username: "admin@abc.com", password: "admin123", role: "admin" },
-        { username: "mark@abc.com", password: "test9876", role: "admin" }
-    ]);
+        const adminUsername = process.env.ADMIN_USERNAME;
+        const adminPassword = process.env.ADMIN_PASSWORD;
 
-    Resource.bulkCreate([
-        { title: "Learn JavaScript", category: "Beginner", link: "https://javascript.info", description: "A comprehensive guide to modern JavaScript." },
-        { title: "FreeCodeCamp", category: "Intermediate", link: "https://freecodecamp.org", description: "Learn coding with hands-on projects." },
-        { title: "Eloquent JavaScript", category: "Advanced", link: "https://eloquentjavascript.net", description: "A deep dive into JavaScript concepts." }
-    ]);
-});
+        if (adminPassword && adminUsername) {
+            // Check if admin user already exists
+            const adminExists = await User.findOne({ where: { username: adminUsername } });
+
+            if (!adminExists) {
+                // Create admin user with hashed password
+                await User.create({
+                    username: adminUsername,
+                    password: adminPassword,
+                    role: "admin"
+                });
+                console.log("Admin account created.");
+            } else {
+                console.log("Admin account already exists.");
+            }
+        } else {
+            console.log("Admin username or password not provided.");
+        }
+    })
+    .catch(err => {
+        console.error("Database sync failed:", err);
+    });
 
 // Start the server
 server.listen(PORT, () => {
