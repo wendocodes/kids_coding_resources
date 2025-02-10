@@ -1,36 +1,40 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
     line-height: 1.6;
-    background-color: #f4f4f9;
+    background-color: #ffe4e1;
     margin: 0;
     padding: 0;
+    color: #2c3e50;
 }
 
 #app {
     max-width: 1200px;
     margin: 20px auto;
     padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #ffcccb, #ffefd5);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border: 3px solid #ff69b4;
 }
 
 div {
     margin: 20px;
 }
 
+/* Fun form style for adding resources */
 form {
     display: flex;
     flex-direction: column;
     gap: 15px; 
     padding: 20px;
-    border: 1px solid #ddd; 
-    border-radius: 8px;
-    background-color: #f9f9f9; 
-    width: 100%;
+    border: 2px dashed #ffb6c1;
+    border-radius: 12px;
+    background-color: #faf0e6;
     max-width: 800px;
-    margin: 0 auto; 
+    margin: 0 auto;
     box-sizing: border-box;
+    font-family: 'Comic Sans MS', cursive;
 }
 
 form input,
@@ -38,174 +42,167 @@ form select,
 form textarea,
 form button {
     font-size: 16px; 
-    padding: 10px; 
-    border: 1px solid #ccc; 
-    border-radius: 5px; 
+    padding: 10px;
+    border: 2px solid #ffa07a;
+    border-radius: 8px;
     width: 100%; 
     box-sizing: border-box;
 }
 
 form button {
-    background-color: #007bff; 
-    color: white; 
-    font-weight: bold; 
-    border: none; 
+    background-color: #ff69b4;
+    color: white;
+    font-weight: bold;
+    border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease; 
+    transition: background-color 0.3s ease;
 }
 
 form button:hover {
-    background-color: #0056b3;
-}
-
-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 400px;
-    z-index: -1;
-    pointer-events: none;
-}
-
-h1,h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    color: #29a7ed;
-    font-weight: bold;
-    margin-top: 100px;
-    position: relative;
-    z-index: 1; 
-}
-
-h2 {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #ff61e5;
-    margin-top: 20px;
-    position: relative;
-    z-index: 1;
+    background-color: #ff7f50;
 }
 
 .resources {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr); /* Always show 3 resources per row */
+    gap: 15px;
     width: 100%;
 }
 
-.login-btn {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-button {
-    background-color: #ff61e5;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    align-items: center;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-.category-filter{
-    display: flex;
-    justify-content: flex-end;
-}
-
-.resource-details, .add-resource {
-    background-color: #fff;
-    border: 2px solid #ff61e5;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.category-filter label {
-    margin-right: 10px;
-}
-
-.category-select {
-    background-color: #fff; 
-    border: 1px solid #ccc; 
-    padding: 10px;
-    border-radius: 5px; 
-    font-size: 16px; 
-    color: #333; 
-    box-sizing: border-box; 
-}
-
-.category-select:focus {
-    border-color: #4CAF50; 
-    outline: none;
-}
-
+/* Resource Cards */
 .resource-card {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(145deg, #ffb6c1, #f8adff);
+    border: 2px solid #ff69b4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(162, 120, 120, 0.15);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 200px; /* Smaller height for compact size */
+    max-width: 400px; /* Limit card width to ensure compact design */
+    margin-right: 30px;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
 }
 
 .resource-details {
-    display: flex;
-    flex-direction: column; 
-    margin-bottom: 15px; 
-    padding: 20px;
-    margin-left: 20px;
-}
-
-.resource-actions {
-    display: flex;
-    justify-content: center;    
-    gap: 20px;
-}
-
-.resource-link {
-    text-decoration: none; 
-    color: #181b1e !important; 
+    padding: 10px;
 }
 
 .resource-details h2 {
-    margin: 0 0 10px;
     font-size: 18px;
-    color: #333;
+    color: #6a5acd;
+    text-align: center;
 }
 
 .resource-details p {
-    margin: 0 0 10px;
+    font-size: 12px;
     text-align: center;
 }
 
 .resource-details a {
     display: inline-block;
-    color: #29a7ed;
+    color: #ff69b4;
     text-decoration: none;
     font-weight: bold;
+    transition: color 0.3s ease;
 }
 
 .resource-details a:hover {
-    text-decoration: underline;
+    color: #6a5acd;
+}
+
+.resource-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
 }
 
 
-button.delete-button {
-    background-color: red; 
-    color: white; 
-    border: none; 
-    padding: 10px 15px;
-    border-radius: 5px; 
-    cursor: pointer; 
+button {
     font-size: 14px;
+    padding: 8px 12px;
+}
+
+button.delete-button {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.visit {
+    font-size: 12px;
 }
 
 button.delete-button:hover {
-    background-color: darkred;
+    background-color: #ff4040;
+}
+
+.visit {
+    background-color: #87cefa;
+    color: white;
+}
+
+.visit:hover {
+    background-color: #4682b4;
+}
+
+h1, h2 {
+    text-align: center;
+    font-size: 3rem;
+    color: #ff69b4;
+    font-family: 'Comic Sans MS', cursive;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: #6a5acd;
+}
+
+.category-filter {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.category-select {
+    background-color: #ffffff;
+    border: 2px solid #ffa07a;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.category-select:focus {
+    border-color: #6a5acd;
+    outline: none;
+}
+
+button {
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2ecc71;
+}
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+    .resources {
+        grid-template-columns: repeat(2, 1fr); /* Two cards per row on medium screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .resources {
+        grid-template-columns: 1fr; /* One card per row on small screens */
+    }
 }

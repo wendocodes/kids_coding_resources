@@ -7,7 +7,6 @@ import authRoutes from "./routes/auth.js";
 import resourcesRoutes from "./routes/resources.js";
 import session from "express-session";
 import methodOverride from 'method-override';
-import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -29,7 +28,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'default-session-secret',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, maxAge: 240000 }
+    cookie: { secure: false, maxAge: 9600000000000 }
 }));
 
 app.use(methodOverride('_method'));
@@ -54,7 +53,7 @@ app.use(authRoutes);
 app.use(resourcesRoutes);
 
 // Sync the database schema without force and create initial admin if needed
-sequelize.sync({ force: true })
+sequelize.sync()
     .then(async () => {
         console.log("Database synced successfully with forced re-creation.");
 
@@ -79,6 +78,44 @@ sequelize.sync({ force: true })
         } else {
             console.log("Admin username or password not provided.");
         }
+
+         // Bulk create resources
+         await Resource.bulkCreate([
+            {
+                title: "Typing Club",
+                category: "Beginner",
+                link: "https://www.typingclub.com/",
+                description: "Learning how to type is quite fundamental for coding, and typingclub.com is a great place to start learning how to type. It is web based and free for both individuals and schools. Learners earn stars and badges as they progress through the lessons. The lessons are interactive and fun. The site also offers a typing test to measure your typing speed and accuracy."
+            },
+            {
+                title: "Scratch Jr.",
+                category: "Bebinner",
+                link: "https://www.scratchjr.org/",
+                description: "ScratchJr allows young kids (ages 5 to 7) to create their own interactive stories and games through simple programming. As they explore, they develop problem-solving skills, work on creative projects, and learn to express their ideas using technology."
+            },
+            {
+                title: "Scratch",
+                category: "Beginner",
+                link: "https://scratch.mit.edu/",
+                description: "Scratch is both a programming language and an online platform where kids can create and share interactive content like stories, games, and animations with a global audience. Through Scratch, children develop creative thinking, teamwork, and logical reasoning skills. It is mainly intended for ages 8 to 16."
+            },
+            {
+                title: "Otto's Farm",
+                category: "Intermediate",
+                link: "http://www.ottodiy.club/login.aspx",
+                description: "Help Otto the robot manage tasks on the farm in this engaging educational game designed for beginners to learn algorithms using block-based or text-based coding. The game is free to play and is suitable for kids aged 6 and above. Teachers can obtain special accounts to create virtual classrooms and manage student profiles for teaching STEAM concepts."
+            },
+            {
+                title: "BlockyGames",
+                category: "Beginner",
+                link: "https://blockly.games/?lang=en",
+                description: "Blockly Games is a series of educational games designed for children with no prior experience with programming. By the end of these games, players are ready to use conventional text-based languages."
+            },
+        ]).then(data => {
+            console.log("Resources created:", data);
+        }).catch(err => {
+            console.error("Failed to create resources:", err);
+        });
     })
     .catch(err => {
         console.error("Database sync failed:", err);

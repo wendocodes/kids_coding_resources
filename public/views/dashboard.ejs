@@ -5,10 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .resource-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .visit-button {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .visit-button:hover {
+            background-color: #2980b9;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        @media (max-width: 600px) {
+            .resource-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome, <%= user.username %></h1>
-    <h2>Manage Resources</h2>
+    <h2 style="color: #3498db;">Manage Resources</h2>
 
     <!-- Add Resource Form -->
     <form action="/api/resources" method="POST">
@@ -17,6 +58,8 @@
             <option value="Beginner">Beginner</option>
             <option value="Intermediate">Intermediate</option>
             <option value="Advanced">Advanced</option>
+            <option value="Advanced">All Ages</option>
+
         </select>
         <input type="url" name="link" placeholder="Link" required>
         <textarea name="description" placeholder="Description" rows="3" required></textarea>
@@ -32,10 +75,10 @@
                     <p><strong>Category:</strong> <%= resource.category %></p>
                     <p><%= resource.description %></p>
                     <div class="resource-actions">
-                        <form action="<%= resource.link %>" method="GET" target="_blank" style="display:inline; width: 50%;">
+                        <form action="<%= resource.link %>" method="GET" target="_blank" style="flex: 1;">
                             <button class="action-button visit-button" type="submit">Visit Resource</button>
                         </form>
-                        <form action="/api/resources/<%= resource.id %>?_method=DELETE" method="POST" style="display:inline; width: 50%;">
+                        <form action="/api/resources/<%= resource.id %>?_method=DELETE" method="POST" style="flex: 1;">
                             <button class="action-button delete-button" type="submit">Delete</button>
                         </form>                                             
                     </div>
